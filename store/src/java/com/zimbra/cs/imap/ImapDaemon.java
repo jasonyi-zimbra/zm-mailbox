@@ -25,6 +25,9 @@ import org.apache.log4j.PropertyConfigurator;
 import com.zimbra.common.localconfig.LC;
 import com.zimbra.common.service.ServiceException;
 import com.zimbra.cs.account.Provisioning;
+import com.zimbra.cs.ephemeral.EphemeralStore;
+import com.zimbra.cs.ephemeral.EphemeralStore.Factory;
+import com.zimbra.cs.extension.ExtensionUtil;
 import com.zimbra.common.util.ZimbraLog;
 
 
@@ -90,6 +93,7 @@ public class ImapDaemon {
             Properties props = new Properties();
             props.load(new FileInputStream(IMAPD_LOG4J_CONFIG));
             PropertyConfigurator.configure(props);
+            maybeInitEphemeralBackendExtension();
 
             if(isZimbraImapEnabled()) {
                 ImapDaemon daemon = new ImapDaemon();
@@ -147,6 +151,26 @@ public class ImapDaemon {
         }
         return false;
     }
+
+    private static void maybeInitEphemeralBackendExtension() throws ServiceException {
+        String url = Provisioning.getInstance().getConfig().getEphemeralBackendURL();
+        if(url != null) {
+            String[] tokens = url.split(":");
+            String backendName = tokens[0];
+            if (tokens != null && tokens.length > 0 && !backendName.equalsIgnoreCase("ldap")) {
+                ExtensionUtil.initAllMatching(new EphemeralStore.EphemeralStoreMatcher(backendName));
+                Factory factory = EphemeralStore.getFactory(backendName);
+                if(factory != null) {
+                    if(factory.getStore() == null) {
+                        errorExit(String.format("no ephemeral store found for backend '%s'", backendName));
+                    }
+                } else {
+                    errorExit(String.format("no ephemeral extension class name found for backend '%s'", backendName));
+                }
+            }
+        }
+    }
+
 
     /**
      * @return true if IMAP(S) servers are being controlled by mailboxd and false if they
