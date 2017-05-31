@@ -17,9 +17,9 @@
 
 package com.zimbra.cs.service.mail;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
@@ -31,7 +31,6 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import com.zimbra.common.util.ZimbraLog;
 import com.google.common.collect.Maps;
 import com.zimbra.common.account.Key;
 import com.zimbra.common.service.ServiceException;
@@ -46,8 +45,6 @@ import com.zimbra.soap.mail.type.FilterAction;
 import com.zimbra.soap.mail.type.FilterRule;
 import com.zimbra.soap.mail.type.FilterTest;
 import com.zimbra.soap.mail.type.FilterTests;
-import com.zimbra.soap.mail.type.FilterVariable;
-import com.zimbra.soap.mail.type.FilterVariables;
 
 
 /**

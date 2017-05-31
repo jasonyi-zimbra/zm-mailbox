@@ -147,10 +147,7 @@ public final class SieveToSoap extends SieveVisitor {
 
     private boolean isNestedRule(){
         // in non nested case, only one process is started but not done.
-        if(numOfIfProcessingStarted == numOfIfProcessingDone+1){
-            return false;
-        }
-        return true;
+        return !(numOfIfProcessingStarted == numOfIfProcessingDone+1);
     }
 
     private <T extends FilterTest> T addTest(T test, RuleProperties props) {
